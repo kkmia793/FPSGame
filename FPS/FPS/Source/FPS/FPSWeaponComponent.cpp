@@ -12,6 +12,7 @@
 #include "Animation/AnimInstance.h"
 #include "Engine/LocalPlayer.h"
 #include "Engine/World.h"
+#include "TimerManager.h"
 
 // Sets default values for this component's properties
 UFPSWeaponComponent::UFPSWeaponComponent()
@@ -91,12 +92,23 @@ bool UFPSWeaponComponent::AttachWeapon(AFPSCharacter* TargetCharacter)
 
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
 		{
-			// Fire
-			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Triggered, this, &UFPSWeaponComponent::Fire);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Started, this, &UFPSWeaponComponent::StartFiring);
+			EnhancedInputComponent->BindAction(FireAction, ETriggerEvent::Completed, this, &UFPSWeaponComponent::StopFiring);
 		}
 	}
 
 	return true;
+}
+
+void UFPSWeaponComponent::StartFiring()
+{
+	Fire();
+	GetWorld()->GetTimerManager().SetTimer(FireTimerHandle, this, &UFPSWeaponComponent::Fire, FireRate, true);
+}
+
+void UFPSWeaponComponent::StopFiring()
+{
+	GetWorld()->GetTimerManager().ClearTimer(FireTimerHandle);
 }
 
 void UFPSWeaponComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
