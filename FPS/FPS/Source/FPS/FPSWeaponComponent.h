@@ -49,6 +49,14 @@ public:
 	UFUNCTION(BlueprintCallable, Category="Weapon")
 	void Fire();
 
+	/** Start firing for continuous fire */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StartFiring();
+
+	/** Stop continuous fire */
+	UFUNCTION(BlueprintCallable, Category = "Weapon")
+	void StopFiring();
+
 protected:
 	/** Ends gameplay for this component. */
 	UFUNCTION()
@@ -57,4 +65,10 @@ protected:
 private:
 	/** The Character holding this weapon*/
 	AFPSCharacter* Character;
+	/** Timer handle for continuous fire */
+	FTimerHandle FireTimerHandle;
+
+	/** Firing rate (bullets per second) */
+	UPROPERTY(EditAnywhere, Category = "Weapon")
+	float FireRate = 0.1f; // 0.1ïbÇ≤Ç∆Ç…î≠éÀÅi10î≠/ïbÅj
 };
